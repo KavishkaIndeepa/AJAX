@@ -118,13 +118,11 @@
     });
 
     $("#btnCusDelete").click(function () {
-
-        let id=$("#txtCustomerID").val();
-        console.log(id)
+        let id = $("#txtCustomerID").val();
         $.ajax({
-            url:"customer?id="+id,
-            method:"delete",
-            success:function (res){
+            url: "customer?id=" + id,
+            method: 'delete',
+            success: function (res) {
                 getAllCustomers();
                 alert(
                     res.message
@@ -134,7 +132,8 @@
                 // console.log(error.responseJSON);
                 // alert(error.responseJSON.message);
             }
-        })
+        });
+
     });
 
     $("#btnUpdate").click(function () {

@@ -1,8 +1,6 @@
 package jsp.servlet;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
+import javax.json.*;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -118,11 +116,18 @@ public class CustomerServlet extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        String cusID = req.getParameter("cusID");
-        String cusName = req.getParameter("cusName");
-        String cusAddress = req.getParameter("cusAddress");
-        String cusSalary = req.getParameter("cusSalary");
+        JsonReader reader = Json.createReader(req.getReader());
+        JsonObject customerObject = reader.readObject();
+
+//        String cusID = req.getParameter("cusID");
+//        String cusName = req.getParameter("cusName");
+//        String cusAddress = req.getParameter("cusAddress");
+//        String cusSalary = req.getParameter("cusSalary");
 //        String option = req.getParameter("option");
+
+        String cusID = customerObject.getString("id");
+        String cusName = customerObject.getString("name");
+        String cusAddress = customerObject.getString("address");
 
         resp.addHeader("Content-Type","application/json");
 
@@ -134,6 +139,7 @@ public class CustomerServlet extends HttpServlet {
                     pstm3.setObject(3, cusID);
                     pstm3.setObject(1, cusName);
                     pstm3.setObject(2, cusAddress);
+
                     if (pstm3.executeUpdate() > 0) {
                         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                         objectBuilder.add("state", "Ok");
@@ -162,7 +168,7 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String cusID = req.getParameter("cusID");
+        String cusID = req.getParameter("id");
 
         resp.addHeader("Content-Type","application/json");
 
