@@ -77,7 +77,7 @@ public class CustomerServlet extends HttpServlet {
         String cusName = req.getParameter("cusName");
         String cusAddress = req.getParameter("cusAddress");
         String cusSalary = req.getParameter("cusSalary");
-        String option = req.getParameter("option");
+//        String option = req.getParameter("option");
 
         resp.addHeader("Content-Type","application/json");
 
@@ -85,8 +85,6 @@ public class CustomerServlet extends HttpServlet {
             Class.forName("com.mysql.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/company", "root", "1234");
 
-            switch (option) {
-                case "add":
                     PreparedStatement pstm = connection.prepareStatement("insert into customer values(?,?,?)");
                     pstm.setObject(1, cusID);
                     pstm.setObject(2, cusName);
@@ -100,26 +98,90 @@ public class CustomerServlet extends HttpServlet {
                         objectBuilder.add("data", "[]");
                         resp.getWriter().print(objectBuilder.build());
                     }
-                    break;
-                case "delete":
-                    PreparedStatement pstm2 = connection.prepareStatement("delete from customer where id=?");
-                    pstm2.setObject(1, cusID);
-                    if (pstm2.executeUpdate() > 0) {
-                        resp.getWriter().println("Customer Deleted..!");
-                    }
-                    break;
-                case "update":
+
+
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+
+            JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+            objectBuilder.add("state", "Error");
+            objectBuilder.add("message", e.getMessage());
+            objectBuilder.add("data", "");
+            resp.setStatus(400);
+            resp.getWriter().print(objectBuilder.build());
+
+//            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        String cusID = req.getParameter("cusID");
+        String cusName = req.getParameter("cusName");
+        String cusAddress = req.getParameter("cusAddress");
+        String cusSalary = req.getParameter("cusSalary");
+//        String option = req.getParameter("option");
+
+        resp.addHeader("Content-Type","application/json");
+
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/company", "root", "1234");
+
                     PreparedStatement pstm3 = connection.prepareStatement("update customer set name=?,address=? where id=?");
                     pstm3.setObject(3, cusID);
                     pstm3.setObject(1, cusName);
                     pstm3.setObject(2, cusAddress);
                     if (pstm3.executeUpdate() > 0) {
-                        resp.getWriter().println("Customer Updated..!");
+                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                        objectBuilder.add("state", "Ok");
+                        objectBuilder.add("message", "Successfully Updated...!");
+                        objectBuilder.add("data", "[]");
+                        resp.getWriter().print(objectBuilder.build());
                     }
-                    break;
-            }
 
-//            resp.sendRedirect("/jsonp/pages/customer");
+
+
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+
+            JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+            objectBuilder.add("state", "Error");
+            objectBuilder.add("message", e.getMessage());
+            objectBuilder.add("data", "");
+            resp.setStatus(400);
+            resp.getWriter().print(objectBuilder.build());
+
+
+        }
+
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String cusID = req.getParameter("cusID");
+
+        resp.addHeader("Content-Type","application/json");
+
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/company", "root", "1234");
+
+
+                    PreparedStatement pstm2 = connection.prepareStatement("delete from customer where id=?");
+                    pstm2.setObject(1, cusID);
+
+                    if (pstm2.executeUpdate() > 0) {
+                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                        objectBuilder.add("state", "Ok");
+                        objectBuilder.add("message", "Successfully Delete...!");
+                        objectBuilder.add("data", "[]");
+                        resp.getWriter().print(objectBuilder.build());
+                    }
+
 
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);

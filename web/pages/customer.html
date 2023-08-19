@@ -100,7 +100,7 @@
         let formData=$("#customerForm").serialize();
         console.log(formData)
         $.ajax({
-            url: "customer?option=add",
+            url: "customer",
             method:"post",
             data:formData,
             success:function (res){
@@ -119,33 +119,55 @@
 
     $("#btnCusDelete").click(function () {
 
-        let formData=$("#customerForm").serialize();
-        console.log(formData)
+        let id=$("#txtCustomerID").val();
+        console.log(id)
         $.ajax({
-            url:"customer?option=delete",
-            method:"post",
-            data:formData,
-            success:function (){
+            url:"customer?id="+id,
+            method:"delete",
+            success:function (res){
                 getAllCustomers();
+                alert(
+                    res.message
+                );
+            },
+            error:function (error){
+                // console.log(error.responseJSON);
+                // alert(error.responseJSON.message);
             }
         })
     });
 
     $("#btnUpdate").click(function () {
-        let formData=$("#customerForm").serialize();
-        console.log(formData)
+        let cusId = $("#txtCustomerID").val();
+        let cusName = $("#txtCustomerName").val();
+        let cusAddress = $("#txtCustomerAddress").val();
+
+        var customerDB={
+            id:cusId,
+            name:cusName,
+            address:cusAddress
+        }
         $.ajax({
-            url:"customer?option=update",
-            method:"post",
-            data:formData,
-            success:function (){
+            url:"customer",
+            method:"put",
+            data:JSON.stringify(customerDB),
+            contentType:"application/json",
+            success:function (res){
                 getAllCustomers();
+                alert(
+                    res.message
+                );
+            },
+            error:function (error){
+                // console.log(error.responseJSON);
+                // alert(error.responseJSON.message);
             }
         })
     });
 
 
     function getAllCustomers() {
+        $("#tblCustomer").empty();
         $.ajax({
             url : "customer",
             success : function (customer) {
@@ -161,10 +183,31 @@
                     let row = `<tr><td>${id}</td><td>${name}</td><td>${address}</td></tr>`;
                     $("#tblCustomer").append(row);
                 }
+                bindRowClickOnAction();
+                clearRow("","","");
             }
         });
     }
 
+    function bindRowClickOnAction() {
+        $("#tblCustomer>tr").click(function () {
+
+            let id = $(this).children(":eq(0)").text();
+            let name = $(this).children(":eq(1)").text();
+            let address = $(this).children(":eq(2)").text();
+
+            $("#txtCustomerID").val(id);
+            $("#txtCustomerName").val(name);
+            $("#txtCustomerAddress").val(address);
+
+        });
+
+    }
+    function clearRow(id,name,address) {
+        $("#txtCustomerID").val(id);
+        $("#txtCustomerName").val(name);
+        $("#txtCustomerAddress").val(address);
+    }
 
 
 </script>
