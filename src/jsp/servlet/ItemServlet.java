@@ -21,20 +21,6 @@ public class ItemServlet extends HttpServlet {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/company", "root", "1234");
             PreparedStatement pstm = connection.prepareStatement("select * from item");
             ResultSet rst = pstm.executeQuery();
-//
-//            ArrayList<ItemDTO> allItems = new ArrayList<>();
-//
-//            while (rst.next()) {
-//                String code = rst.getString(1);
-//                String name = rst.getString(2);
-//                int qtyOnHand = rst.getInt(3);
-//                double unitPrice = rst.getDouble(4);
-//                allItems.add(new ItemDTO(code, name, qtyOnHand, unitPrice));
-//            }
-//
-//            req.setAttribute("keyTwo", allItems);
-//
-//            req.getRequestDispatcher("item.html").forward(req, resp);
 
             resp.addHeader("Content-Type","application/json");
 
@@ -92,47 +78,118 @@ public class ItemServlet extends HttpServlet {
         String itemName = req.getParameter("description");
         String qty = req.getParameter("qty");
         String unitPrice = req.getParameter("unitPrice");
-        String option = req.getParameter("option");
+
+        resp.addHeader("Content-Type","application/json");
 //
         try {
             Class.forName("com.mysql.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/company", "root", "1234");
-            switch (option) {
-                case "add":
+
                     PreparedStatement pstm = connection.prepareStatement("insert into item values(?,?,?,?)");
                     pstm.setObject(1, code);
                     pstm.setObject(2, itemName);
                     pstm.setObject(3, qty);
                     pstm.setObject(4, unitPrice);
                     if (pstm.executeUpdate() > 0) {
-                        resp.getWriter().println("Item Added..!");
-                        resp.sendRedirect("item");
+//                        resp.getWriter().println("Item Added..!");
+//                        resp.sendRedirect("item");
+                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                        objectBuilder.add("state", "Ok");
+                        objectBuilder.add("message", "Successfully Added...!");
+                        objectBuilder.add("data", "[]");
+                        resp.getWriter().print(objectBuilder.build());
                     }
-                    break;
-                case "delete":
-                    PreparedStatement pstm2 = connection.prepareStatement("delete from item where code=?");
-                    pstm2.setObject(1, code);
-                    if (pstm2.executeUpdate() > 0) {
-                        resp.getWriter().println("Item Deleted..!");
-                        resp.sendRedirect("/jsonp/pages/item.html");
-                    }
-                    break;
-                case "update":
+
+
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+            JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+            objectBuilder.add("state", "Error");
+            objectBuilder.add("message", e.getMessage());
+            objectBuilder.add("data", "");
+            resp.setStatus(400);
+            resp.getWriter().print(objectBuilder.build());
+        }
+    }
+
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String code = req.getParameter("code");
+        String itemName = req.getParameter("description");
+        String qty = req.getParameter("qty");
+        String unitPrice = req.getParameter("unitPrice");
+
+
+        resp.addHeader("Content-Type","application/json");
+//
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/company", "root", "1234");
+
                     PreparedStatement pstm3 = connection.prepareStatement("update item set description=?,qtyOnHand=?,unitPrice=? where code=?");
                     pstm3.setObject(1, itemName);
                     pstm3.setObject(2, qty);
                     pstm3.setObject(3, unitPrice);
                     pstm3.setObject(4, code);
                     if (pstm3.executeUpdate() > 0) {
-                        resp.getWriter().println("Item Updated..!");
-                        resp.sendRedirect("/jsonp/pages/item.html");
+
+                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                        objectBuilder.add("state", "Ok");
+                        objectBuilder.add("message", "Successfully Updated...!");
+                        objectBuilder.add("data", "[]");
+                        resp.getWriter().print(objectBuilder.build());
                     }
-                    break;
-            }
+
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         } catch (SQLException e) {
+//            throw new RuntimeException(e);
+            JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+            objectBuilder.add("state", "Error");
+            objectBuilder.add("message", e.getMessage());
+            objectBuilder.add("data", "");
+            resp.setStatus(400);
+            resp.getWriter().print(objectBuilder.build());
+        }
+    }
+
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String code = req.getParameter("code");
+
+
+        resp.addHeader("Content-Type","application/json");
+//
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/company", "root", "1234");
+
+                    PreparedStatement pstm2 = connection.prepareStatement("delete from item where code=?");
+                    pstm2.setObject(1, code);
+
+                    if (pstm2.executeUpdate() > 0) {
+
+                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                        objectBuilder.add("state", "Ok");
+                        objectBuilder.add("message", "Successfully Delete...!");
+                        objectBuilder.add("data", "[]");
+                        resp.getWriter().print(objectBuilder.build());
+                    }
+
+        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
+        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+            JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+            objectBuilder.add("state", "Error");
+            objectBuilder.add("message", e.getMessage());
+            objectBuilder.add("data", "");
+            resp.setStatus(400);
+            resp.getWriter().print(objectBuilder.build());
         }
     }
 }
