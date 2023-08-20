@@ -161,16 +161,16 @@
     });
 
     $("#btnItemUpdate").click(function () {
-        let code = $("#itemCode").val();
-        let name = $("#itemName").val();
-        let qty = $("#itemQty").val();
-        let price = $("#itemPrice").val();
+        let itemCode = $("#itemCode").val();
+        let itemName = $("#itemName").val();
+        let itemQty = $("#itemQty").val();
+        let itemPrice = $("#itemPrice").val();
 
         var itemDB={
-            code:code,
-            description:name,
-            qtyOnHand:qty,
-            unitPrice:price
+            code:itemCode,
+            description:itemName,
+            qtyOnHand:itemQty,
+            unitPrice:itemPrice
         }
         $.ajax({
             url:"item",

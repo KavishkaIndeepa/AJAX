@@ -1,8 +1,6 @@
 package jsp.servlet;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
+import javax.json.*;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -117,11 +115,21 @@ public class ItemServlet extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String code = req.getParameter("code");
-        String itemName = req.getParameter("description");
-        String qty = req.getParameter("qty");
-        String unitPrice = req.getParameter("unitPrice");
 
+        JsonReader reader = Json.createReader(req.getReader());
+        JsonObject itemObject = reader.readObject();
+
+
+//        String code = req.getParameter("code");
+//        String itemName = req.getParameter("description");
+//        String qty = req.getParameter("qty");
+//        String unitPrice = req.getParameter("unitPrice");
+
+
+        String code = itemObject.getString("code");
+        String itemName = itemObject.getString("description");
+        String qty = itemObject.getString("qty");
+        String unitPrice = itemObject.getString("unitPrice");
 
         resp.addHeader("Content-Type","application/json");
 //
