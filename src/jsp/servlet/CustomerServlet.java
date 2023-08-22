@@ -29,6 +29,7 @@ public class CustomerServlet extends HttpServlet {
             ResultSet rst = pstm.executeQuery();
 
             resp.addHeader("Content-Type","application/json");
+            resp.addHeader("Access-Control-Allow-Origin","*");
 
 //            String json="[";
 //            while (rst.next()) {
@@ -75,9 +76,17 @@ public class CustomerServlet extends HttpServlet {
         String cusName = req.getParameter("cusName");
         String cusAddress = req.getParameter("cusAddress");
         String cusSalary = req.getParameter("cusSalary");
-//        String option = req.getParameter("option");
+        String option = req.getParameter("option");
+
+//        JsonReader reader = Json.createReader(req.getReader());
+//        JsonObject customerObject = reader.readObject();
+//
+//        String cusID = customerObject.getString("cusID");
+//        String cusName = customerObject.getString("cusName");
+//        String cusAddress = customerObject.getString("cusAddress");
 
         resp.addHeader("Content-Type","application/json");
+        resp.addHeader("Access-Control-Allow-Origin","*");
 
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -130,6 +139,7 @@ public class CustomerServlet extends HttpServlet {
         String cusAddress = customerObject.getString("address");
 
         resp.addHeader("Content-Type","application/json");
+        resp.addHeader("Access-Control-Allow-Origin","*");
 
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -171,6 +181,7 @@ public class CustomerServlet extends HttpServlet {
         String cusID = req.getParameter("id");
 
         resp.addHeader("Content-Type","application/json");
+        resp.addHeader("Access-Control-Allow-Origin","*");
 
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -202,5 +213,13 @@ public class CustomerServlet extends HttpServlet {
 
 //            throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.addHeader("Access-Control-Allow-Origin","*");
+        resp.addHeader("Access-Control-Allow-Methods","PUT");
+        resp.addHeader("Access-Control-Allow-Methods","DELETE");
+        resp.addHeader("Access-Control-Allow-Headers","Content-type");
     }
 }
